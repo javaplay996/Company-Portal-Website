@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.TuanduiLiuyanDao">
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        a.id as id
+        ,a.tuandui_id as tuanduiId
+        ,a.yonghu_id as yonghuId
+        ,a.tuandui_liuyan_content as tuanduiLiuyanContent
+        ,a.reply_content as replyContent
+        ,a.insert_time as insertTime
+        ,a.create_time as createTime
+    </sql>
+    <select id="selectListView" parameterType="map" resultType="com.entity.view.TuanduiLiuyanView" >
+        SELECT
+        <include refid="Base_Column_List" />
+
+--         级联表的字段
+        ,tuandui.tuandui_name as tuanduiName
+        ,tuandui.tuandui_number as tuanduiNumber
+        ,tuandui.tuandui_photo as tuanduiPhoto
+        ,tuandui.tuandui_fuzeren as tuanduiFuzeren
+        ,tuandui.tuandui_zuoyong as tuanduiZuoyong
+        ,tuandui.fangdong_id as fangdongId
+        ,tuandui.tuandui_content as tuanduiContent
+        ,tuandui.insert_time as insertTime
+        ,yonghu.yonghu_name as yonghuName
+        ,yonghu.sex_types as sexTypes
+        ,yonghu.yonghu_time as yonghuTime
+        ,yonghu.yonghu_id_number as yonghuIdNumber
+        ,yonghu.yonghu_phone as yonghuPhone
+        ,yonghu.yonghu_photo as yonghuPhoto
+
+        FROM tuandui_liuyan  a
+        left JOIN tuandui tuandui ON a.tuandui_id = tuandui.id
+        left JOIN yonghu yonghu ON a.yonghu_id = yonghu.id
+
+        <where>
+            <if test="params.tuanduiId != null">
+                and a.tuandui_id = #{params.tuanduiId}
+            </if>
+            <if test="params.yonghuId != null">
+                and a.yonghu_id = #{params.yonghuId}
+            </if>
+            <if test=" params.tuanduiLiuyanContent != '' and params.tuanduiLiuyanContent != null and params.tuanduiLiuyanContent != 'null' ">
+                and a.tuandui_liuyan_content like CONCAT('%',#{params.tuanduiLiuyanContent},'%')
+            </if>
+            <if test=" params.replyContent != '' and params.replyContent != null and params.replyContent != 'null' ">
+                and a.reply_content like CONCAT('%',#{params.replyContent},'%')
+            </if>
+            <if test=" params.insertTimeStart != '' and params.insertTimeStart != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(a.insert_time) >= UNIX_TIMESTAMP(#{params.insertTimeStart}) ]]>
+            </if>
+            <if test=" params.insertTimeEnd != '' and params.insertTimeEnd != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(a.insert_time) <= UNIX_TIMESTAMP(#{params.insertTimeEnd}) ]]>
+            </if>
+
+            <if test=" params.tuanduiName != '' and params.tuanduiName != null and params.tuanduiName != 'null' ">
+                and tuandui.tuandui_name like CONCAT('%',#{params.tuanduiName},'%')
+            </if>
+            <if test="params.tuanduiNumberStart != null ">
+                <![CDATA[  and tuandui.tuandui_number >= #{params.tuanduiNumberStart}   ]]>
+            </if>
+            <if test="params.tuanduiNumberEnd != null ">
+                <![CDATA[  and tuandui.tuandui_number <= #{params.tuanduiNumberEnd}   ]]>
+            </if>
+            <if test=" params.tuanduiFuzeren != '' and params.tuanduiFuzeren != null and params.tuanduiFuzeren != 'null' ">
+                and tuandui.tuandui_fuzeren like CONCAT('%',#{params.tuanduiFuzeren},'%')
+            </if>
+            <if test=" params.tuanduiZuoyong != '' and params.tuanduiZuoyong != null and params.tuanduiZuoyong != 'null' ">
+                and tuandui.tuandui_zuoyong like CONCAT('%',#{params.tuanduiZuoyong},'%')
+            </if>
+            <if test="params.fangdongId != null">
+                and tuandui.fangdong_id = #{params.fangdongId}
+            </if>
+            <if test=" params.tuanduiContent != '' and params.tuanduiContent != null and params.tuanduiContent != 'null' ">
+                and tuandui.tuandui_content like CONCAT('%',#{params.tuanduiContent},'%')
+            </if>
+            <if test=" params.insertTimeStart != '' and params.insertTimeStart != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(tuandui.insert_time) >= UNIX_TIMESTAMP(#{params.insertTimeStart}) ]]>
+            </if>
+            <if test=" params.insertTimeEnd != '' and params.insertTimeEnd != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(tuandui.insert_time) <= UNIX_TIMESTAMP(#{params.insertTimeEnd}) ]]>
+            </if>
+            <if test=" params.yonghuName != '' and params.yonghuName != null and params.yonghuName != 'null' ">
+                and yonghu.yonghu_name like CONCAT('%',#{params.yonghuName},'%')
+            </if>
+            <if test="params.sexTypes != null">
+                and yonghu.sex_types = #{params.sexTypes}
+            </if>
+
+            <if test=" params.yonghuTimeStart != '' and params.yonghuTimeStart != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(yonghu.yonghu_time) >= UNIX_TIMESTAMP(#{params.yonghuTimeStart}) ]]>
+            </if>
+            <if test=" params.yonghuTimeEnd != '' and params.yonghuTimeEnd != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(yonghu.yonghu_time) <= UNIX_TIMESTAMP(#{params.yonghuTimeEnd}) ]]>
+            </if>
+            <if test=" params.yonghuIdNumber != '' and params.yonghuIdNumber != null and params.yonghuIdNumber != 'null' ">
+                and yonghu.yonghu_id_number like CONCAT('%',#{params.yonghuIdNumber},'%')
+            </if>
+            <if test=" params.yonghuPhone != '' and params.yonghuPhone != null and params.yonghuPhone != 'null' ">
+                and yonghu.yonghu_phone like CONCAT('%',#{params.yonghuPhone},'%')
+            </if>
+        </where>
+        order by a.${params.orderBy} desc
+    </select>
+
+</mapper>
